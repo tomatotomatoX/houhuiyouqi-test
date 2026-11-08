@@ -165,7 +165,7 @@ function computeResult() {
   const main = PERSONAS[ranked[0]];
   const sub = PERSONAS[ranked[1]];
 
-  // 六维：主 80% + 副 20%
+  // 五维：主 80% + 副 20%
   const dims = {};
   DIMS.forEach((d) => {
     dims[d.key] = Math.round(main.dims[d.key] * 0.8 + sub.dims[d.key] * 0.2);
@@ -235,7 +235,7 @@ function pickScenarios(main, sub) {
    ============================================================ */
 function radarSVG(dims, color) {
   const N = DIMS.length;
-  const cx = 230, cy = 176, R = 96;
+  const cx = 250, cy = 176, R = 96;
   const angle = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / N;
   const pt = (i, r) => {
     const x = cx + r * Math.cos(angle(i));
@@ -243,7 +243,7 @@ function radarSVG(dims, color) {
     return [x.toFixed(1), y.toFixed(1)];
   };
 
-  let svg = '<svg viewBox="0 0 460 352" class="radar-svg" role="img" aria-label="六维底色雷达图">';
+  let svg = '<svg viewBox="0 0 500 352" class="radar-svg" role="img" aria-label="五维友情雷达图">';
 
   // 网格层
   for (let layer = 3; layer >= 1; layer--) {
@@ -315,8 +315,8 @@ function renderResultPage(result) {
       '<p class="rp-rare">仅 ' + main.rarePct + "% 的人测出" + main.name + " · 稀有度拉满</p>" +
     "</div>";
 
-  /* ---- 性格底色解读 ---- */
-  html += rpModule("你的性格底色", '<p class="rp-desc">' + main.baseDesc + "</p>");
+  /* ---- 友情底色解读 ---- */
+  html += rpModule("你的友情底色", '<p class="rp-desc">' + main.baseDesc + "</p>");
 
   /* ---- 剪票虚线 ---- */
   html += '<div class="rp-divider"><span>✂ 检票后请继续阅读</span></div>';
@@ -330,7 +330,7 @@ function renderResultPage(result) {
     "</div>"
   ).join("");
   html += rpModule(
-    "六维底色图谱",
+    "五维友情图谱",
     radarSVG(dims, main.color) +
     '<div class="rp-dims">' + dimRows + "</div>"
   );
@@ -350,7 +350,7 @@ function renderResultPage(result) {
       "</div>"
     );
   }).join("");
-  html += rpModule("情景解析", '<p class="rp-mod-note">从你的 16 次作答中，挑出最能暴露底色的三个瞬间：</p>' + scenHtml);
+  html += rpModule("情景解析", '<p class="rp-mod-note">从你的 16 次作答中，挑出最能暴露友情底色的三个瞬间：</p>' + scenHtml);
 
   /* ---- 友情相性 ---- */
   html += rpModule(
@@ -370,32 +370,32 @@ function renderResultPage(result) {
     '<p class="rp-rare-note">✦ ' + main.rareNote + "</p>"
   );
 
-  /* ---- 优势 & 雷区 ---- */
+  /* ---- 友情优势 & 雷区 ---- */
   html += rpModule(
-    "优势 & 雷区",
+    "友情优势 & 雷区",
     '<div class="rp-two-col">' +
-      '<div class="rp-list rp-strength"><div class="rp-list-t">✦ 你的优势</div>' +
+      '<div class="rp-list rp-strength"><div class="rp-list-t">✦ 友情优势</div>' +
         main.strengths.map((s) => "<p>· " + s + "</p>").join("") + "</div>" +
-      '<div class="rp-list rp-risk"><div class="rp-list-t">⚠ 你的雷区</div>' +
+      '<div class="rp-list rp-risk"><div class="rp-list-t">⚠ 友情雷区</div>' +
         main.risks.map((s) => "<p>· " + s + "</p>").join("") + "</div>" +
     "</div>"
   );
 
-  /* ---- 人生建议（新增） ---- */
+  /* ---- 友情经营建议 ---- */
   html += rpModule(
-    "人生建议",
+    "友情经营建议",
     main.lifeAdvice.map((a) => '<div class="rp-advice"><span class="rp-advice-ico">✦</span><p>' + a + "</p></div>").join("")
   );
 
   /* ---- 名场面台词 ---- */
   html += '<div class="rp-quoteband">🎤 你的名场面台词：<b>「' + main.sceneLine + "」</b></div>";
 
-  /* ---- 简要总评（新增，压轴） ---- */
+  /* ---- 友情总评（压轴） ---- */
   html +=
     '<div class="rp-card rp-summary" style="--pc:' + main.color + '">' +
-      '<div class="rp-mod-title">简要总评</div>' +
+      '<div class="rp-mod-title">友情总评</div>' +
       '<p class="rp-summary-text">' + main.summary + "</p>" +
-      '<div class="rp-summary-stamp">底色已鉴定</div>' +
+      '<div class="rp-summary-stamp">友情已鉴定</div>' +
     "</div>";
 
   $("result-report").innerHTML = html;

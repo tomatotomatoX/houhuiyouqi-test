@@ -456,20 +456,20 @@ body {
   white-space: nowrap;
 }
 
-/* ---------- 六维图谱 ---------- */
+/* ---------- 五维友情图谱 ---------- */
 .radar-svg { display: block; width: 100%; max-width: 430px; margin: 0 auto; }
 .radar-label {
   font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: .5px;
   fill: var(--ink);
 }
 .rp-subnote { margin-top: 12px; text-align: center; font-size: 13px; color: var(--ink-soft); }
 .rp-subnote b { color: var(--green); }
 .rp-dims { margin-top: 18px; display: grid; gap: 13px; }
 .rp-dim-row { display: flex; align-items: center; gap: 12px; }
-.rp-dim-label { flex: none; width: 70px; font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.rp-dim-label { flex: none; width: 96px; font-size: 13.5px; font-weight: 500; color: var(--ink); }
 .rp-dim-track {
   flex: 1;
   height: 10px;

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>后会友期 · 小红书商品图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6eeda; --paper-deep:#efe3c8; --card:#fbf5e6;
+  --ink:#3a3126; --ink-soft:#7a6c58;
+  --green:#2d4a3e; --green-deep:#1f352c;
+  --orange:#c96f2f; --brick:#b5432a; --gold:#d89a3d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#2a2a2a;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;display:flex;flex-direction:column;align-items:center;gap:60px;padding:40px}
+
+/* ============ 海报画板 ============ */
+.poster{
+  width:1080px;position:relative;overflow:hidden;color:var(--ink);
+  background:
+    radial-gradient(ellipse 760px 360px at 50% -140px, rgba(217,154,61,.34), transparent 62%),
+    radial-gradient(circle at 10% 92%, rgba(201,111,47,.10), transparent 34%),
+    radial-gradient(circle at 90% 80%, rgba(45,74,62,.10), transparent 36%),
+    repeating-linear-gradient(0deg, rgba(58,49,38,.025) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+#p34{height:1440px}
+#p11{height:1080px}
+
+/* ---- 顶部车票头 ---- */
+.p-top{
+  height:112px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 64px;background:linear-gradient(180deg,#34584a 0%,#27423a 100%);
+  color:#f3ead2;position:relative;
+}
+.p-top::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:6px;
+  background:repeating-linear-gradient(90deg, rgba(243,234,210,.35) 0 14px, transparent 14px 26px);
+}
+.p-top .l{display:flex;align-items:center;gap:16px}
+.p-top .logo{
+  font-family:"Noto Serif SC",serif;font-weight:900;font-size:30px;letter-spacing:4px;
+}
+.p-top .tag{
+  font-size:15px;letter-spacing:3px;padding:5px 14px;border:1px solid rgba(243,234,210,.45);border-radius:999px;color:rgba(243,234,210,.85);
+}
+.p-top .r{font-size:14px;letter-spacing:4px;color:rgba(243,234,210,.6)}
+
+/* ---- 内容区 ---- */
+.p-body{padding:46px 64px 0;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+
+.p-title{margin-top:38px;font-family:"Noto Serif SC",serif;font-weight:900;color:var(--green)}
+.p-title .t1{font-size:52px;letter-spacing:6px}
+.p-title .t2{display:block;margin-top:6px;font-size:88px;letter-spacing:2px;line-height:1.25}
+.p-title .hl{color:var(--orange)}
+.p-sub{margin-top:18px;font-size:25px;letter-spacing:3px;color:var(--ink-soft)}
+
+/* ---- 大车票 ---- */
+.p-ticket{
+  margin-top:38px;width:952px;height:224px;background:var(--card);border-radius:20px;position:relative;
+  box-shadow:0 14px 34px rgba(58,49,38,.16), inset 0 0 0 1px rgba(58,49,38,.08);
+  display:flex;align-items:center;
+}
+.p-ticket::before,.p-ticket::after{
+  content:"";position:absolute;width:44px;height:44px;border-radius:50%;
+  background:var(--paper-deep);top:50%;transform:translateY(-50%);z-index:2;
+  box-shadow:inset 0 3px 6px rgba(58,49,38,.14);
+}
+.p-ticket::before{left:-24px}
+.p-ticket::after{right:-24px;box-shadow:inset 0 -3px 6px rgba(58,49,38,.14)}
+.tk-route{flex:1;padding:0 176px 0 66px;display:flex;align-items:center;gap:22px;text-align:left}
+.tk-st{font-family:"Noto Serif SC",serif;font-weight:900;font-size:40px;letter-spacing:3px;white-space:nowrap}
+.tk-st.to{color:var(--gold)}
+.tk-line{position:relative;flex:1;height:3px;background:repeating-linear-gradient(90deg, rgba(45,74,62,.65) 0 14px, transparent 14px 24px)}
+.tk-line i{position:absolute;left:-8px;top:-34px;font-size:44px;font-style:normal;line-height:1}
+.tk-no{position:absolute;top:22px;right:96px;font-size:16px;letter-spacing:2px;color:var(--ink-soft)}
+.tk-stamp{
+  position:absolute;right:22px;bottom:22px;width:100px;height:100px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:"Noto Serif SC",serif;font-weight:700;font-size:26px;line-height:1.3;color:var(--brick);
+  border:4px solid rgba(181,67,42,.7);transform:rotate(-12deg);opacity:.85;
+}
+
+/* ---- 8 人格徽章 ---- */
+.p-guests{margin-top:40px;width:952px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.g-badge{
+  height:74px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;
+  font-family:"Noto Serif SC",serif;font-weight:700;font-size:27px;letter-spacing:1px;
+  background:rgba(255,252,244,.85);
+  box-shadow:inset 0 0 0 1.5px var(--gc), 0 4px 10px rgba(58,49,38,.07);
+  color:var(--gc);
+}
+.g-badge i{width:14px;height:14px;border-radius:50%;background:var(--gc);font-style:normal}
+
+/* ---- 报告亮点 ---- */
+.p-report{margin-top:38px;width:952px;background:rgba(45,74,62,.07);border-radius:18px;padding:30px 40px}
+.p-report .h{font-family:"Noto Serif SC",serif;font-weight:900;font-size:29px;letter-spacing:4px;color:var(--green)}
+.p-report .items{margin-top:18px;display:flex;justify-content:space-between}
+.p-report .it{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:500;color:var(--ink)}
+.p-report .it b{color:var(--orange);font-weight:700;font-size:24px}
+
+/* ---- 稀有度 ---- */
+.p-rare{margin-top:30px;font-size:24px;letter-spacing:1px;color:var(--ink-soft)}
+.p-rare b{color:var(--brick)}
+
+/* ---- CTA ---- */
+.p-cta{
+  margin-top:34px;width:820px;height:96px;border-radius:16px;
+  background:linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+  color:#f8f1dd;display:flex;align-items:center;justify-content:center;gap:18px;
+  font-family:"Noto Serif SC",serif;font-weight:700;font-size:34px;letter-spacing:6px;
+  box-shadow:0 10px 24px rgba(31,53,44,.35), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.p-cta .train{font-size:36px;letter-spacing:0}
+
+/* ---- 底注 ---- */
+.p-foot{margin-top:24px;font-size:17px;letter-spacing:2px;color:var(--ink-soft)}
+
+/* ============ 1:1 版压缩调整 ============ */
+#p11 .p-top{height:92px}
+#p11 .p-body{padding-top:32px}
+#p11 .p-title{margin-top:28px}
+#p11 .p-title .t1{font-size:40px}
+#p11 .p-title .t2{font-size:66px}
+#p11 .p-sub{margin-top:12px;font-size:22px}
+#p11 .p-ticket{margin-top:26px;width:952px;height:176px}
+#p11 .tk-st{font-size:34px}
+#p11 .tk-line i{font-size:38px;top:-28px}
+#p11 .tk-route{padding-right:150px}
+#p11 .tk-stamp{width:86px;height:86px;font-size:21px;right:22px;bottom:20px}
+#p11 .p-guests{margin-top:24px;gap:14px}
+#p11 .g-badge{height:60px;font-size:24px}
+#p11 .p-report{margin-top:22px;padding:20px 36px}
+#p11 .p-report .h{font-size:25px}
+#p11 .p-report .items{margin-top:12px}
+#p11 .p-report .it{font-size:21px}
+#p11 .p-rare{margin-top:18px;font-size:21px}
+#p11 .p-cta{margin-top:22px;width:760px;height:80px;font-size:29px}
+#p11 .p-foot{margin-top:14px;font-size:15px}
+</style>
+</head>
+<body>
+
+<!-- ============ 3:4 · 1080×1440 ============ -->
+<div class="poster" id="p34">
+  <div class="p-top">
+    <div class="l"><span class="logo">后会友期号</span><span class="tag">性格底色鉴定所</span></div>
+    <div class="r">PERSONALITY TEST</div>
+  </div>
+  <div class="p-body">
+    <h1 class="p-title"><span class="t1">测测你是</span><span class="t2"><span class="hl">后会友期</span>里的谁？</span></h1>
+    <p class="p-sub">16 站旅程 · 8 种人格 · 5 维友情图谱</p>
+
+    <div class="p-ticket">
+      <span class="tk-no">NO. K2026-HHYQ</span>
+      <div class="tk-route">
+        <span class="tk-st">日常站</span>
+        <span class="tk-line"><i>🚂</i></span>
+        <span class="tk-st to">底色鉴定所</span>
+      </div>
+      <div class="tk-stamp">底色<br>已售</div>
+    </div>
+
+    <div class="p-guests">
+      <div class="g-badge" style="--gc:#C96F2F"><i></i>张萌型</div>
+      <div class="g-badge" style="--gc:#7A8B6F"><i></i>马天宇型</div>
+      <div class="g-badge" style="--gc:#5B7A5E"><i></i>白小纯型</div>
+      <div class="g-badge" style="--gc:#B5432A"><i></i>厉娜型</div>
+      <div class="g-badge" style="--gc:#3E5C76"><i></i>许飞型</div>
+      <div class="g-badge" style="--gc:#D89A3D"><i></i>文吉儿型</div>
+      <div class="g-badge" style="--gc:#A63A3A"><i></i>青稚型</div>
+      <div class="g-badge" style="--gc:#7E93A8"><i></i>王子璇型</div>
+    </div>
+
+    <div class="p-report">
+      <div class="h">— 测完生成专属《底色鉴定报告》 —</div>
+      <div class="items">
+        <span class="it"><b>✦</b>五维友情图谱</span>
+        <span class="it"><b>✦</b>专属情景解析</span>
+        <span class="it"><b>✦</b>友情相性配对</span>
+        <span class="it"><b>✦</b>友情建议·总评</span>
+      </div>
+    </div>
+
+    <p class="p-rare">仅 <b>13%</b> 的人测出「统筹大局的操盘手」· 你是稀有底色吗？</p>
+
+    <div class="p-cta"><span class="train">🚂</span>凭卡密 · 检票进站<span class="train">🚃</span></div>
+    <p class="p-foot">测试仅供娱乐 · 愿你的友情永不散场</p>
+  </div>
+</div>
+
+<!-- ============ 1:1 · 1080×1080 ============ -->
+<div class="poster" id="p11">
+  <div class="p-top">
+    <div class="l"><span class="logo">后会友期号</span><span class="tag">性格底色鉴定所</span></div>
+    <div class="r">PERSONALITY TEST</div>
+  </div>
+  <div class="p-body">
+    <h1 class="p-title"><span class="t1">测测你是</span><span class="t2"><span class="hl">后会友期</span>里的谁？</span></h1>
+    <p class="p-sub">16 站旅程 · 8 种人格 · 5 维友情图谱</p>
+
+    <div class="p-ticket">
+      <span class="tk-no">NO. K2026-HHYQ</span>
+      <div class="tk-route">
+        <span class="tk-st">日常站</span>
+        <span class="tk-line"><i>🚂</i></span>
+        <span class="tk-st to">底色鉴定所</span>
+      </div>
+      <div class="tk-stamp">底色<br>已售</div>
+    </div>
+
+    <div class="p-guests">
+      <div class="g-badge" style="--gc:#C96F2F"><i></i>张萌型</div>
+      <div class="g-badge" style="--gc:#7A8B6F"><i></i>马天宇型</div>
+      <div class="g-badge" style="--gc:#5B7A5E"><i></i>白小纯型</div>
+      <div class="g-badge" style="--gc:#B5432A"><i></i>厉娜型</div>
+      <div class="g-badge" style="--gc:#3E5C76"><i></i>许飞型</div>
+      <div class="g-badge" style="--gc:#D89A3D"><i></i>文吉儿型</div>
+      <div class="g-badge" style="--gc:#A63A3A"><i></i>青稚型</div>
+      <div class="g-badge" style="--gc:#7E93A8"><i></i>王子璇型</div>
+    </div>
+
+    <div class="p-report">
+      <div class="h">— 测完生成专属《底色鉴定报告》 —</div>
+      <div class="items">
+        <span class="it"><b>✦</b>五维友情图谱</span>
+        <span class="it"><b>✦</b>专属情景解析</span>
+        <span class="it"><b>✦</b>友情相性配对</span>
+        <span class="it"><b>✦</b>友情建议·总评</span>
+      </div>
+    </div>
+
+    <div class="p-cta"><span class="train">🚂</span>凭卡密 · 检票进站<span class="train">🚃</span></div>
+    <p class="p-foot">测试仅供娱乐 · 愿你的友情永不散场</p>
+  </div>
+</div>
+
+</body>
+</html>
