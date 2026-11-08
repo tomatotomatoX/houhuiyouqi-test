@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>后会友期 · 性格底色鉴定所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ 屏1：卡密检票页 ============ -->
+<section id="screen-ticket" class="screen active">
+  <div class="sun-badge">高原暖阳号 · 检票口</div>
+
+  <div class="ticket-card">
+    <div class="ticket-top">
+      <div class="ticket-route">
+        <span class="station from">毕业季站</span>
+        <span class="route-line"><i class="track"></i><i class="train-emoji">🚂</i></span>
+        <span class="station to">底色鉴定所</span>
+      </div>
+      <div class="ticket-sub">后会友期号 · K2026 次列车</div>
+    </div>
+
+    <div class="ticket-divider"><i class="punch left"></i><i class="dashline"></i><i class="punch right"></i></div>
+
+    <div class="ticket-body">
+      <p class="ticket-desc">本列车开往你的性格底色鉴定所。<br>请出示有效卡密，完成检票进站。</p>
+      <div class="input-row">
+        <input id="code-input" type="text" placeholder="请输入卡密" autocomplete="off" maxlength="12" spellcheck="false">
+      </div>
+      <p id="code-error" class="code-error"></p>
+      <button id="btn-enter" class="btn-main">检票进站</button>
+      <p class="ticket-hint">一票在手 · 全程通用（同一设备免二次检票）</p>
+    </div>
+
+    <div class="ticket-stamp">已<br>售</div>
+  </div>
+
+  <p class="footer-note">测试仅供娱乐 · 数据仅保存在本机</p>
+</section>
+
+<!-- ============ 屏2：测试页 ============ -->
+<section id="screen-quiz" class="screen">
+  <header class="quiz-header">
+    <div class="train-plate">后会友期号</div>
+    <div class="progress-stations">
+      <span class="st-start">出发站</span>
+      <div class="progress-track">
+        <i class="progress-fill" id="progress-fill"></i>
+        <i class="progress-train" id="progress-train">🚂</i>
+      </div>
+      <span class="st-end">底色站</span>
+    </div>
+    <div class="progress-text"><b id="q-current">1</b> / 16 站</div>
+  </header>
+
+  <main class="quiz-body">
+    <div class="q-card" id="q-card">
+      <div class="q-meta" id="q-meta">第一站</div>
+      <h2 class="q-title" id="q-title">加载中…</h2>
+      <div class="q-options" id="q-options"></div>
+    </div>
+    <p class="quiz-tip" id="quiz-tip">凭第一直觉选，别想太久～</p>
+  </main>
+</section>
+
+<!-- ============ 屏3：结果页（网页报告版） ============ -->
+<section id="screen-result" class="screen">
+  <div class="sun-badge">终点站 · 底色鉴定报告</div>
+
+  <div class="result-head" id="result-head">
+    <h1 class="result-title" id="result-title">--</h1>
+    <p class="result-sub" id="result-sub">--</p>
+  </div>
+
+  <div id="result-report"></div>
+
+  <div class="result-actions">
+    <button id="btn-retest" class="btn-main">再测一次</button>
+    <button id="btn-back-top" class="btn-ghost">回到报告顶部</button>
+  </div>
+
+  <p class="footer-note">测试仅供娱乐 · 愿你的友情永不散场</p>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

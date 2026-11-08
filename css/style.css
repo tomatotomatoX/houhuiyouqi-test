@@ -1,0 +1,629 @@
+/* ============================================================
+   后会友期 · 性格底色鉴定所 —— 节目旅行风（高原暖阳 / 绿皮火车 / 复古车票）
+   ============================================================ */
+:root {
+  --paper: #f6eeda;          /* 纸面米黄 */
+  --paper-deep: #efe3c8;
+  --ink: #3a3126;            /* 墨棕 */
+  --ink-soft: #7a6c58;
+  --green: #2d4a3e;          /* 绿皮火车墨绿 */
+  --green-deep: #1f352c;
+  --orange: #c96f2f;         /* 赭橙 */
+  --brick: #b5432a;          /* 印章砖红 */
+  --gold: #d89a3d;
+  --card: #fbf5e6;
+  --shadow: 0 6px 24px rgba(58, 49, 38, .14);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse 900px 480px at 50% -180px, rgba(217, 154, 61, .32), transparent 62%),
+    radial-gradient(circle at 12% 88%, rgba(201, 111, 47, .10), transparent 34%),
+    radial-gradient(circle at 88% 76%, rgba(45, 74, 62, .10), transparent 36%),
+    repeating-linear-gradient(0deg, rgba(58,49,38,.022) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+}
+
+.screen {
+  display: none;
+  width: min(100%, 560px);
+  min-height: 100vh;
+  padding: 28px 20px 48px;
+  animation: screenIn .45s ease both;
+}
+.screen.active { display: block; }
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 公共小件 ---------- */
+.sun-badge {
+  margin: 4px auto 20px;
+  width: max-content;
+  padding: 7px 22px;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--green);
+  background: rgba(251, 245, 230, .85);
+  border: 1px solid rgba(45, 74, 62, .35);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 4px rgba(45, 74, 62, .07);
+}
+
+.footer-note {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+}
+
+.btn-main {
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-indent: 6px;
+  color: #f8f1dd;
+  background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(31, 53, 44, .35), inset 0 1px 0 rgba(255,255,255,.18);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-main:active { transform: translateY(2px); box-shadow: 0 4px 10px rgba(31,53,44,.3); }
+
+.btn-ghost {
+  display: block;
+  width: 100%;
+  padding: 13px 0;
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 4px;
+  color: var(--green);
+  background: transparent;
+  border: 1.5px dashed rgba(45, 74, 62, .55);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* ============================================================
+   屏1 · 检票口
+   ============================================================ */
+.ticket-card {
+  position: relative;
+  margin-top: 18px;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(58,49,38,.06);
+  overflow: hidden;
+}
+.ticket-card::before, .ticket-card::after {
+  content: "";
+  position: absolute;
+  width: 34px; height: 12px;
+  background: var(--paper-deep);
+  border-radius: 999px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.ticket-card::before { left: -18px; box-shadow: inset 2px 0 4px rgba(58,49,38,.12); }
+.ticket-card::after  { right: -18px; box-shadow: inset -2px 0 4px rgba(58,49,38,.12); }
+
+.ticket-top {
+  padding: 26px 26px 18px;
+  background:
+    linear-gradient(180deg, rgba(45,74,62,.94) 0%, rgba(45,74,62,.86) 100%);
+  color: #f3ead2;
+}
+.ticket-route { display: flex; align-items: center; gap: 10px; }
+.station { font-family: "Noto Serif SC", "SimSun", serif; font-weight: 700; font-size: 19px; letter-spacing: 2px; white-space: nowrap; }
+.station.to { color: var(--gold); }
+.route-line { position: relative; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, rgba(243,234,210,.9) 0 8px, transparent 8px 14px); }
+.train-emoji { position: absolute; left: -4px; top: -20px; font-size: 24px; line-height: 1; animation: trainGo 2.6s ease-in-out infinite alternate; }
+@keyframes trainGo { from { transform: translateX(0); } to { transform: translateX(22px); } }
+
+.ticket-sub { margin-top: 12px; text-align: center; font-size: 12px; letter-spacing: 5px; color: rgba(243,234,210,.72); }
+
+.ticket-divider { position: relative; display: flex; align-items: center; height: 0; border-top: 1.5px dashed rgba(58,49,38,.28); }
+
+.ticket-body { padding: 26px 26px 28px; }
+.ticket-desc {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  text-align: center;
+  font-size: 15.5px;
+  line-height: 2;
+  color: var(--ink);
+}
+
+.input-row { margin-top: 20px; }
+#code-input {
+  width: 100%;
+  padding: 15px 16px;
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(255,252,244,.9);
+  border: 1.5px solid rgba(58,49,38,.3);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+#code-input::placeholder { letter-spacing: 1px; font-size: 14px; font-weight: 400; color: #b3a88f; }
+#code-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(201,111,47,.16); }
+
+.code-error { margin-top: 10px; text-align: center; font-size: 13px; color: var(--brick); min-height: 19px; }
+
+#btn-enter { margin-top: 14px; }
+
+.ticket-hint { margin-top: 16px; text-align: center; font-size: 12px; color: var(--ink-soft); letter-spacing: 1px; }
+
+.ticket-stamp {
+  position: absolute;
+  right: 14px; top: 14px;
+  width: 54px; height: 54px;
+  display: flex; justify-content: center; align-items: center;
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 15px; font-weight: 700; line-height: 1.15;
+  color: var(--brick);
+  border: 2.5px solid rgba(181,67,42,.75);
+  border-radius: 50%;
+  transform: rotate(12deg);
+  opacity: .82;
+  pointer-events: none;
+}
+
+/* ============================================================
+   屏2 · 测试页
+   ============================================================ */
+.quiz-header { text-align: center; }
+.train-plate {
+  display: inline-block;
+  padding: 6px 20px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px; font-weight: 700; letter-spacing: 6px; text-indent: 6px;
+  color: #f3ead2;
+  background: var(--green);
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(31,53,44,.3);
+}
+.progress-stations {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 6px 6px;
+  font-size: 12px; color: var(--ink-soft); letter-spacing: 1px;
+}
+.progress-track { position: relative; flex: 1; height: 8px; background: rgba(58,49,38,.14); border-radius: 999px; }
+.progress-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--orange), var(--gold));
+  transition: width .35s ease;
+}
+.progress-train { position: absolute; top: -18px; left: 0%; font-size: 22px; transform: translateX(-50%); transition: left .35s ease; filter: drop-shadow(0 2px 2px rgba(58,49,38,.25)); }
+.progress-text { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+.progress-text b { color: var(--orange); font-size: 16px; }
+
+.quiz-body { margin-top: 16px; }
+.q-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 26px 22px 22px;
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(58,49,38,.06);
+  position: relative;
+}
+.q-card::after {  /* 左上角小邮票 */
+  content: "🎫";
+  position: absolute; right: 16px; top: 14px;
+  font-size: 20px; opacity: .5;
+}
+.q-meta {
+  display: inline-block;
+  padding: 3px 12px;
+  font-size: 12px; letter-spacing: 3px;
+  color: var(--brick);
+  border: 1px solid rgba(181,67,42,.5);
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+.q-title {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+.q-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 15px 14px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: rgba(255,252,244,.75);
+  border: 1.5px solid rgba(58,49,38,.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform .1s, border-color .15s, background .15s, box-shadow .15s;
+}
+.q-option:active { transform: scale(.985); }
+.q-option:hover { border-color: rgba(201,111,47,.6); background: #fffcf2; }
+.q-option .opt-letter {
+  flex: none;
+  width: 32px; height: 32px;
+  display: flex; justify-content: center; align-items: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--green);
+  background: rgba(45,74,62,.09);
+  border: 1.5px solid rgba(45,74,62,.4);
+  border-radius: 8px;
+}
+.q-option.picked {
+  border-color: var(--orange);
+  background: #fff8e8;
+  box-shadow: 0 4px 12px rgba(201,111,47,.18);
+}
+.q-option.picked .opt-letter { color: #fff; background: var(--orange); border-color: var(--orange); }
+
+.quiz-tip { margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--ink-soft); letter-spacing: 1px; }
+
+/* ============================================================
+   屏3 · 结果页（网页报告版）
+   ============================================================ */
+.result-head {
+  text-align: center;
+  margin: 8px 0 22px;
+}
+.result-title {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--green);
+}
+.result-sub { margin-top: 8px; font-size: 13.5px; color: var(--ink-soft); letter-spacing: 1px; }
+
+.result-actions { margin-top: 24px; display: grid; gap: 12px; }
+
+/* ---------- 车票头 ---------- */
+.rp-ticket {
+  background: linear-gradient(180deg, #34584a 0%, #27423a 100%);
+  color: #f3ead2;
+  border-radius: 16px;
+  padding: 20px 22px 18px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.rp-ticket::after {
+  content: "🚂";
+  position: absolute;
+  right: -14px; bottom: -12px;
+  font-size: 64px;
+  opacity: .1;
+  transform: rotate(-8deg);
+}
+.rp-ticket-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(243, 234, 210, .8);
+}
+.rp-ticket-route { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.rp-station {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+.rp-to { color: var(--gold); }
+.rp-route-line {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(243, 234, 210, .9) 0 8px, transparent 8px 14px);
+}
+.rp-train {
+  position: absolute;
+  left: -4px; top: -18px;
+  font-size: 20px;
+  line-height: 1;
+  animation: trainGo 2.6s ease-in-out infinite alternate;
+}
+.rp-ticket-sub {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(243, 234, 210, .65);
+}
+
+/* ---------- 报告卡片通用 ---------- */
+.rp-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-top: 26px;
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(58, 49, 38, .06);
+}
+.rp-mod-title {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--green);
+  text-align: center;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+}
+.rp-mod-title::before { content: "— "; color: var(--gold); }
+.rp-mod-title::after  { content: " —"; color: var(--gold); }
+
+/* ---------- 人格主卡 ---------- */
+.rp-hero { text-align: center; padding: 30px 22px 26px; }
+.rp-badge {
+  display: inline-block;
+  padding: 8px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fdf8ec;
+  background: var(--pc, var(--green));
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(58, 49, 38, .18);
+}
+.rp-quote {
+  margin-top: 18px;
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #6b5d49;
+}
+.rp-tags {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.rp-tag {
+  padding: 5px 15px;
+  font-size: 13px;
+  letter-spacing: .5px;
+  color: var(--pc, var(--green));
+  background: rgba(255, 252, 244, .85);
+  border: 1.5px solid var(--pc, var(--green));
+  border-radius: 999px;
+}
+.rp-rare { margin-top: 16px; font-size: 12.5px; color: var(--ink-soft); letter-spacing: 1px; }
+
+/* ---------- 底色解读 ---------- */
+.rp-desc {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 15px;
+  line-height: 2.1;
+  color: var(--ink);
+  text-align: justify;
+}
+
+/* ---------- 剪票虚线 ---------- */
+.rp-divider {
+  position: relative;
+  height: 0;
+  border-top: 1.5px dashed rgba(58, 49, 38, .28);
+  margin: 36px 4px;
+}
+.rp-divider span {
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translate(-50%, -50%);
+  padding: 0 14px;
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  color: var(--ink-soft);
+  background: linear-gradient(180deg, var(--paper), var(--paper-deep));
+  white-space: nowrap;
+}
+
+/* ---------- 六维图谱 ---------- */
+.radar-svg { display: block; width: 100%; max-width: 430px; margin: 0 auto; }
+.radar-label {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  fill: var(--ink);
+}
+.rp-subnote { margin-top: 12px; text-align: center; font-size: 13px; color: var(--ink-soft); }
+.rp-subnote b { color: var(--green); }
+.rp-dims { margin-top: 18px; display: grid; gap: 13px; }
+.rp-dim-row { display: flex; align-items: center; gap: 12px; }
+.rp-dim-label { flex: none; width: 70px; font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.rp-dim-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(58, 49, 38, .12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rp-dim-track i { display: block; height: 100%; border-radius: 999px; transition: width .5s ease; }
+.rp-dim-val { flex: none; width: 34px; text-align: right; font-size: 13.5px; color: var(--ink); }
+
+/* ---------- 情景解析 ---------- */
+.rp-mod-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin: -6px 0 18px; }
+.rp-scene {
+  border: 1.5px solid rgba(58, 49, 38, .16);
+  background: rgba(255, 252, 244, .72);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  margin-bottom: 16px;
+}
+.rp-scene:last-child { margin-bottom: 0; }
+.rp-scene-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.rp-scene-station {
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  color: var(--brick);
+  border: 1px solid rgba(181, 67, 42, .45);
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+.rp-scene-g { font-size: 12.5px; font-weight: 700; letter-spacing: 1px; }
+.rp-scene-q { font-size: 14.5px; font-weight: 500; line-height: 1.75; color: var(--ink); }
+.rp-scene-a { margin-top: 10px; font-size: 13.5px; line-height: 1.75; color: var(--ink-soft); }
+.rp-scene-a b { color: var(--ink); font-weight: 600; }
+.rp-scene-reveal {
+  margin-top: 12px;
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: var(--green-deep);
+  background: rgba(45, 74, 62, .08);
+  border-radius: 10px;
+  padding: 11px 14px;
+}
+
+/* ---------- 友情相性 ---------- */
+.rp-match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rp-match-card {
+  border: 1.5px solid rgba(58, 49, 38, .2);
+  border: 1.5px solid color-mix(in srgb, var(--pc) 55%, transparent);
+  background: rgba(58, 49, 38, .05);
+  background: color-mix(in srgb, var(--pc) 10%, #fbf5e6);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+}
+.rp-match-t { font-size: 12px; letter-spacing: 1px; color: var(--ink-soft); }
+.rp-match-name {
+  margin-top: 9px;
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-weight: 700;
+  font-size: 16.5px;
+  color: var(--pc);
+}
+.rp-match-why { margin-top: 9px; font-size: 12.5px; line-height: 1.8; color: var(--ink); }
+.rp-rare-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--ink-soft); letter-spacing: 1px; }
+
+/* ---------- 优势 & 雷区 ---------- */
+.rp-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.rp-list-t {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-weight: 700;
+  font-size: 15.5px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.rp-strength .rp-list-t { color: #2d6e4e; }
+.rp-risk .rp-list-t { color: var(--brick); }
+.rp-list p { font-size: 13px; line-height: 1.85; color: var(--ink); margin-bottom: 9px; }
+.rp-list p:last-child { margin-bottom: 0; }
+
+/* ---------- 人生建议 ---------- */
+.rp-advice {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 0;
+  border-bottom: 1px dashed rgba(58, 49, 38, .16);
+}
+.rp-advice:last-child { border-bottom: none; padding-bottom: 2px; }
+.rp-advice-ico { flex: none; color: var(--gold); font-size: 14px; line-height: 1.9; }
+.rp-advice p { font-size: 13.5px; line-height: 1.9; color: var(--ink); }
+
+/* ---------- 名场面台词 ---------- */
+.rp-quoteband {
+  margin-top: 26px;
+  background: var(--green);
+  color: #f3ead2;
+  border-radius: 14px;
+  padding: 17px 18px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.9;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow);
+}
+.rp-quoteband b {
+  color: var(--gold);
+  font-family: "Noto Serif SC", "SimSun", serif;
+}
+
+/* ---------- 简要总评 ---------- */
+.rp-summary { position: relative; overflow: hidden; }
+.rp-summary-text {
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 15px;
+  line-height: 2.1;
+  color: var(--ink);
+  text-align: justify;
+  padding-bottom: 24px;
+}
+.rp-summary-stamp {
+  position: absolute;
+  right: 16px; bottom: 14px;
+  transform: rotate(-8deg);
+  font-family: "Noto Serif SC", "SimSun", serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--brick);
+  border: 2px solid rgba(181, 67, 42, .6);
+  border-radius: 8px;
+  padding: 4px 9px;
+  opacity: .75;
+  pointer-events: none;
+}
+
+@media (max-width: 430px) {
+  .rp-match-grid { grid-template-columns: 1fr; }
+  .rp-two-col { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   动画细节
+   ============================================================ */
+@keyframes stampPop {
+  0% { transform: scale(2.2) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(.94) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.q-card { animation: qIn .35s ease both; }
+@keyframes qIn {
+  from { opacity: 0; transform: translateX(26px); }
+  to { opacity: 1; transform: translateX(0); }
+}
