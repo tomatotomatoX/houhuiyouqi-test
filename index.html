@@ -63,6 +63,10 @@
       <div class="q-meta" id="q-meta">第一站</div>
       <h2 class="q-title" id="q-title">加载中…</h2>
       <div class="q-options" id="q-options"></div>
+      <div class="q-nav">
+        <button id="btn-prev" class="btn-prev" type="button">← 上一题</button>
+        <span class="q-nav-tip">选错？可以回去改～</span>
+      </div>
     </div>
     <p class="quiz-tip" id="quiz-tip">凭第一直觉选，别想太久～</p>
   </main>
@@ -80,11 +84,13 @@
   <div id="result-report"></div>
 
   <div class="result-actions">
-    <button id="btn-retest" class="btn-main">再测一次</button>
+    <button id="btn-poster" class="btn-main">📸 保存结果海报</button>
+    <button id="btn-retest" class="btn-ghost">再测一次</button>
     <button id="btn-back-top" class="btn-ghost">回到报告顶部</button>
+    <p class="poster-hint" id="poster-hint">一键生成专属海报，下载保存后可分享到小红书</p>
   </div>
 
-  <p class="footer-note">测试仅供娱乐 · 愿你的友情永不散场</p>
+  <p class="footer-note">本测试仅供娱乐，不构成专业心理建议 · 愿你的友情永不散场</p>
 </section>
 
 <script src="js/data.js"></script>

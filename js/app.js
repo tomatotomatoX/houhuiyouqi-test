@@ -125,7 +125,13 @@ function renderQuestion(skipAnim) {
   const pct = (currentIdx / TOTAL) * 100;
   $("progress-fill").style.width = pct + "%";
   $("progress-train").style.left = Math.max(2, Math.min(98, pct)) + "%";
+
+  // 上一题按钮状态：第一站不可回退
+  const prevBtn = $("btn-prev");
+  if (prevBtn) prevBtn.disabled = currentIdx === 0;
 }
+
+let pickTimer = null;
 
 function pick(optIdx) {
   if (currentIdx >= TOTAL) return;
@@ -135,7 +141,8 @@ function pick(optIdx) {
   opts.forEach((el, i) => { if (i === optIdx) el.classList.add("picked"); });
   opts.forEach((el) => (el.disabled = true));
 
-  setTimeout(() => {
+  pickTimer = setTimeout(() => {
+    pickTimer = null;
     if (answers.length < TOTAL) {
       currentIdx = answers.length;
       store.set(LS_PROGRESS, JSON.stringify({ answers }));
@@ -145,6 +152,21 @@ function pick(optIdx) {
       computeResult();
     }
   }, 320);
+}
+
+/* 回到上一题：丢弃最近一次作答，允许重新选择 */
+function goPrev() {
+  if (currentIdx === 0) return;
+  if (pickTimer) { clearTimeout(pickTimer); pickTimer = null; }
+  if (answers.length > currentIdx) {
+    answers.length = currentIdx;      // 撤销本题刚点的选择
+  } else {
+    answers.pop();                    // 丢弃上一题的作答
+  }
+  currentIdx = answers.length;
+  if (currentIdx === 0) store.remove(LS_PROGRESS);
+  else store.set(LS_PROGRESS, JSON.stringify({ answers }));
+  renderQuestion(true);
 }
 
 /* ============================================================
@@ -283,6 +305,7 @@ function rpModule(title, body, extraCls) {
 }
 
 function renderResultPage(result) {
+  lastResult = result;
   const { main, sub, dims, ticketNo } = result;
 
   $("result-title").textContent = main.archetype;
@@ -370,17 +393,6 @@ function renderResultPage(result) {
     '<p class="rp-rare-note">✦ ' + main.rareNote + "</p>"
   );
 
-  /* ---- 友情优势 & 雷区 ---- */
-  html += rpModule(
-    "友情优势 & 雷区",
-    '<div class="rp-two-col">' +
-      '<div class="rp-list rp-strength"><div class="rp-list-t">✦ 友情优势</div>' +
-        main.strengths.map((s) => "<p>· " + s + "</p>").join("") + "</div>" +
-      '<div class="rp-list rp-risk"><div class="rp-list-t">⚠ 友情雷区</div>' +
-        main.risks.map((s) => "<p>· " + s + "</p>").join("") + "</div>" +
-    "</div>"
-  );
-
   /* ---- 友情经营建议 ---- */
   html += rpModule(
     "友情经营建议",
@@ -398,8 +410,299 @@ function renderResultPage(result) {
       '<div class="rp-summary-stamp">友情已鉴定</div>' +
     "</div>";
 
+  /* ---- 免责声明 ---- */
+  html += '<div class="rp-disclaimer">本测试为综艺《后会友期》主题的娱乐化性格测试，结果仅供参考，不构成任何专业心理测评或建议。人生和友情，请以你的真实感受为准。</div>';
+
   $("result-report").innerHTML = html;
   showScreen("screen-result");
+}
+
+/* ============================================================
+   6.5 结果海报生成（Canvas 1080×1920，一键下载）
+   ============================================================ */
+let lastResult = null;
+
+function rr(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxW, lh) {
+  let line = "", yy = y;
+  for (const ch of text) {
+    if (ctx.measureText(line + ch).width > maxW) {
+      ctx.fillText(line, x, yy);
+      line = ch;
+      yy += lh;
+    } else {
+      line += ch;
+    }
+  }
+  if (line) ctx.fillText(line, x, yy);
+  return yy;
+}
+
+const PS = {
+  SERIF: '"Noto Serif SC", "SimSun", serif',
+  SANS: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+  INK: "#3a3126", INK_SOFT: "#7a6c58",
+  GREEN: "#2d4a3e", GOLD: "#d89a3d",
+  PAPER: "#f6eeda", PAPER_DEEP: "#efe3c8", CARD: "#fbf5e6",
+};
+
+async function drawPoster() {
+  if (!lastResult) return null;
+  const { main, dims, ticketNo } = lastResult;
+  const best = PERSONAS[main.match.id];
+  const worst = PERSONAS[main.clash.id];
+
+  await document.fonts.ready;
+
+  const W = 1080, H = 1920;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  ctx.textBaseline = "alphabetic";
+
+  /* ---- 背景 ---- */
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, PS.PAPER);
+  bg.addColorStop(1, PS.PAPER_DEEP);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+  const glow = ctx.createRadialGradient(W / 2, -80, 20, W / 2, -80, 520);
+  glow.addColorStop(0, "rgba(217,154,61,.32)");
+  glow.addColorStop(1, "rgba(217,154,61,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, 620);
+
+  /* ---- 车票头 ---- */
+  const headGrad = ctx.createLinearGradient(0, 0, 0, 130);
+  headGrad.addColorStop(0, "#34584a");
+  headGrad.addColorStop(1, "#27423a");
+  ctx.fillStyle = headGrad;
+  ctx.fillRect(0, 0, W, 130);
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#f3ead2";
+  ctx.font = "900 38px " + PS.SERIF;
+  ctx.fillText("后会友期号 · 友情底色鉴定所", 60, 80);
+  ctx.font = "500 20px " + PS.SANS;
+  ctx.fillStyle = "rgba(243,234,210,.6)";
+  ctx.textAlign = "right";
+  ctx.fillText("PERSONALITY TEST", W - 60, 80);
+  ctx.strokeStyle = "rgba(243,234,210,.4)";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([14, 12]);
+  ctx.beginPath(); ctx.moveTo(0, 133); ctx.lineTo(W, 133); ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* ---- 大车票 ---- */
+  ctx.fillStyle = "rgba(58,49,38,.14)";
+  rr(ctx, 60, 172, 960, 156, 20); ctx.fill();
+  ctx.fillStyle = PS.CARD;
+  rr(ctx, 60, 165, 960, 156, 20); ctx.fill();
+  ctx.textAlign = "right";
+  ctx.fillStyle = PS.INK_SOFT;
+  ctx.font = "500 20px " + PS.SANS;
+  ctx.fillText("NO. " + ticketNo, 985, 202);
+  ctx.textAlign = "left";
+  ctx.fillStyle = PS.INK;
+  ctx.font = "900 46px " + PS.SERIF;
+  ctx.fillText("出发站", 110, 272);
+  ctx.strokeStyle = "rgba(45,74,62,.55)";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([12, 10]);
+  ctx.beginPath(); ctx.moveTo(285, 258); ctx.lineTo(580, 258); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = "40px " + PS.SANS;
+  ctx.textAlign = "center";
+  ctx.fillText("🚂", 442, 272);
+  ctx.textAlign = "right";
+  ctx.fillStyle = PS.GOLD;
+  ctx.font = "900 46px " + PS.SERIF;
+  ctx.fillText(main.guest + "的友情底色站", 985, 272);
+  ctx.textAlign = "center";
+  ctx.fillStyle = PS.INK_SOFT;
+  ctx.font = "500 22px " + PS.SANS;
+  ctx.fillText("后会友期号 · 性格底色鉴定所", 540, 298);
+
+  /* ---- 人格徽章 ---- */
+  const badgeText = "你是「" + main.guest + "」· " + main.name;
+  ctx.font = "700 34px " + PS.SANS;
+  const bw = ctx.measureText(badgeText).width + 88;
+  ctx.fillStyle = main.color;
+  rr(ctx, W / 2 - bw / 2, 368, bw, 72, 36); ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(badgeText, W / 2, 414);
+
+  /* ---- 金句 / 标签 / 稀有度 ---- */
+  ctx.fillStyle = PS.INK_SOFT;
+  ctx.font = "italic 600 32px " + PS.SERIF;
+  ctx.fillText("「 " + main.quote + " 」", W / 2, 500);
+
+  ctx.font = "500 24px " + PS.SANS;
+  const gap = 24;
+  const tws = main.tags.map((t) => ctx.measureText("#" + t).width + 52);
+  const tTotal = tws.reduce((a, b) => a + b, 0) + gap * (main.tags.length - 1);
+  let tx = W / 2 - tTotal / 2;
+  main.tags.forEach((t, i) => {
+    ctx.fillStyle = hexToRgba(main.color, .12);
+    rr(ctx, tx, 532, tws[i], 50, 25); ctx.fill();
+    ctx.strokeStyle = hexToRgba(main.color, .6);
+    ctx.lineWidth = 2.5;
+    rr(ctx, tx, 532, tws[i], 50, 25); ctx.stroke();
+    ctx.fillStyle = main.color;
+    ctx.fillText("#" + t, tx + tws[i] / 2, 566);
+    tx += tws[i] + gap;
+  });
+
+  ctx.fillStyle = PS.INK_SOFT;
+  ctx.font = "500 26px " + PS.SANS;
+  ctx.fillText("仅 " + main.rarePct + "% 的人测出" + main.name + " · 稀有度拉满", W / 2, 630);
+
+  /* ---- 剪票虚线 ---- */
+  ctx.strokeStyle = "rgba(58,49,38,.3)";
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([12, 10]);
+  ctx.beginPath(); ctx.moveTo(120, 672); ctx.lineTo(W - 120, 672); ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* ---- 五维友情图谱（五边形雷达） ---- */
+  ctx.fillStyle = PS.GREEN;
+  ctx.font = "900 40px " + PS.SERIF;
+  ctx.textAlign = "center";
+  ctx.fillText("— 五维友情图谱 —", W / 2, 732);
+
+  const cx = W / 2, cy = 960, R = 140, N = DIMS.length;
+  const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / N;
+  const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
+
+  for (let layer = 3; layer >= 1; layer--) {
+    ctx.strokeStyle = "rgba(58,49,38,.18)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    DIMS.forEach((_, i) => {
+      const p = pt(i, (R * layer) / 3);
+      if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+    });
+    ctx.closePath(); ctx.stroke();
+  }
+  DIMS.forEach((_, i) => {
+    const p = pt(i, R);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p[0], p[1]); ctx.stroke();
+  });
+  ctx.beginPath();
+  DIMS.forEach((_, i) => {
+    const p = pt(i, (R * dims[DIMS[i].key]) / 100);
+    if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+  });
+  ctx.closePath();
+  ctx.fillStyle = hexToRgba(main.color, .28); ctx.fill();
+  ctx.strokeStyle = main.color; ctx.lineWidth = 4; ctx.stroke();
+  DIMS.forEach((_, i) => {
+    const p = pt(i, (R * dims[DIMS[i].key]) / 100);
+    ctx.beginPath(); ctx.arc(p[0], p[1], 7, 0, Math.PI * 2);
+    ctx.fillStyle = main.color; ctx.fill();
+  });
+  ctx.font = "600 26px " + PS.SANS;
+  ctx.fillStyle = PS.INK;
+  DIMS.forEach((d, i) => {
+    const a = ang(i);
+    const lx = cx + (R + 42) * Math.cos(a);
+    const ly = cy + (R + 42) * Math.sin(a);
+    ctx.textAlign = Math.abs(Math.cos(a)) < .3 ? "center" : (Math.cos(a) > 0 ? "left" : "right");
+    ctx.fillText(d.label, lx, ly + (Math.sin(a) > .3 ? 16 : Math.sin(a) < -.3 ? 0 : 8));
+  });
+
+  /* ---- 数值条 ---- */
+  let by = 1162;
+  DIMS.forEach((d) => {
+    ctx.textAlign = "left";
+    ctx.fillStyle = PS.INK;
+    ctx.font = "500 26px " + PS.SANS;
+    ctx.fillText(d.label, 150, by);
+    ctx.fillStyle = "rgba(58,49,38,.12)";
+    rr(ctx, 420, by - 18, 440, 20, 10); ctx.fill();
+    ctx.fillStyle = main.color;
+    rr(ctx, 420, by - 18, Math.max((440 * dims[d.key]) / 100, 20), 20, 10); ctx.fill();
+    ctx.textAlign = "right";
+    ctx.font = "700 27px " + PS.SANS;
+    ctx.fillText(String(dims[d.key]), 930, by);
+    by += 42;
+  });
+
+  /* ---- 友情相性 ---- */
+  ctx.strokeStyle = "rgba(58,49,38,.3)";
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([12, 10]);
+  ctx.beginPath(); ctx.moveTo(120, 1372); ctx.lineTo(W - 120, 1372); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = PS.GREEN;
+  ctx.font = "900 40px " + PS.SERIF;
+  ctx.textAlign = "center";
+  ctx.fillText("— 友情相性 —", W / 2, 1420);
+  ctx.textAlign = "left";
+  ctx.fillStyle = best.color;
+  ctx.font = "700 30px " + PS.SERIF;
+  ctx.fillText("✦ 最合拍的搭子 · " + best.name, 120, 1470);
+  ctx.fillStyle = PS.INK;
+  ctx.font = "400 26px " + PS.SANS;
+  ctx.fillText(main.match.why, 120, 1508);
+  ctx.fillStyle = worst.color;
+  ctx.font = "700 30px " + PS.SERIF;
+  ctx.fillText("⚠ 最容易闹掰 · " + worst.name, 120, 1554);
+  ctx.fillStyle = PS.INK;
+  ctx.fillText(main.clash.why, 120, 1592);
+
+  /* ---- 友情总评（深绿卡） ---- */
+  ctx.fillStyle = PS.GREEN;
+  rr(ctx, 60, 1630, 960, 236, 22); ctx.fill();
+  ctx.fillStyle = PS.GOLD;
+  ctx.font = "900 32px " + PS.SERIF;
+  ctx.textAlign = "center";
+  ctx.fillText("— 友情总评 —", W / 2, 1678);
+  ctx.fillStyle = "#f3ead2";
+  ctx.font = "400 25px " + PS.SANS;
+  ctx.textAlign = "left";
+  wrapText(ctx, main.summary, 105, 1718, 870, 38);
+
+  /* ---- 底注（含免责声明） ---- */
+  ctx.fillStyle = PS.INK_SOFT;
+  ctx.font = "500 19px " + PS.SANS;
+  ctx.textAlign = "center";
+  ctx.fillText("本测试仅供娱乐 · 结果不构成专业心理建议 ｜ 后会友期 · 性格底色鉴定所", W / 2, 1912);
+
+  return canvas;
+}
+
+async function savePoster() {
+  const btn = $("btn-poster");
+  const hint = $("poster-hint");
+  try {
+    btn.disabled = true;
+    hint.textContent = "海报生成中…";
+    const canvas = await drawPoster();
+    if (!canvas) throw new Error("no-result");
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "后会友期-友情底色海报-" + lastResult.main.guest + ".png";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    hint.textContent = "✅ 海报已生成并开始下载（手机端若未弹出，可长按保存图片）";
+  } catch (e) {
+    hint.textContent = "生成失败，请重试一次";
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 /* ============================================================
@@ -416,6 +719,9 @@ function initResultActions() {
   $("btn-back-top").addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+
+  $("btn-prev").addEventListener("click", goPrev);
+  $("btn-poster").addEventListener("click", savePoster);
 }
 
 /* ============================================================
